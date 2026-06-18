@@ -7,9 +7,21 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export async function getDashboardOverview(): Promise<DashboardOverview> {
   if (!API_BASE_URL) return dashboardMockData;
 
+  const headers: HeadersInit = {
+    "Accept": "application/json",
+  };
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("vinhomes_admin_token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/admin/dashboard`, {
       cache: 'no-store',
+      headers,
     });
 
     if (!res.ok) {
