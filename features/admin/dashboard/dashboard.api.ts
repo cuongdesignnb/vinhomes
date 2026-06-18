@@ -7,11 +7,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export async function getDashboardOverview(): Promise<DashboardOverview> {
   if (!API_BASE_URL) return dashboardMockData;
 
-  const res = await fetch(`${API_BASE_URL}/admin/dashboard`, {
-    cache: 'no-store',
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/admin/dashboard`, {
+      cache: 'no-store',
+    });
 
-  if (!res.ok) throw new Error('Không thể tải tổng quan hệ thống');
+    if (!res.ok) {
+      console.warn("API request failed. Falling back to mock data.");
+      return dashboardMockData;
+    }
 
-  return unwrapApiResponse(await res.json());
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn("API request failed. Falling back to mock data.", error);
+    return dashboardMockData;
+  }
 }

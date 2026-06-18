@@ -11,16 +11,22 @@ export async function getUserDashboardOverview(): Promise<UserDashboardOverview>
     return userDashboardMockData;
   }
 
-  const res = await fetch(`${API_BASE_URL}/user/dashboard`, {
-    cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/user/dashboard`, {
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  if (!res.ok) {
-    throw new Error("Không thể tải cổng thông tin khách hàng");
+    if (!res.ok) {
+      console.warn("API request failed. Falling back to mock data.");
+      return userDashboardMockData;
+    }
+
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn("API request failed. Falling back to mock data.", error);
+    return userDashboardMockData;
   }
-
-  return unwrapApiResponse(await res.json());
 }

@@ -15,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
+        $middleware->redirectGuestsTo(function ($request) {
+            if ($request->is('api/*')) {
+                return null;
+            }
+            return '/login';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (\Illuminate\Validation\ValidationException $e) {
