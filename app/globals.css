@@ -1,26 +1,191 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f3;
+  --foreground: #10233f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: #faf8f3;
+  --color-foreground: #10233f;
+  --font-sans: "Roboto", "Roboto Fallback", ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  min-width: 320px;
+  overflow-x: hidden;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-roboto), "Roboto", ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #d8b15a;
+  color: #061b3a;
+}
+
+.section-title {
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0;
+}
+
+.section-title::after {
+  position: absolute;
+  bottom: 0.18em;
+  left: calc(100% + 12px);
+  width: 36px;
+  height: 2px;
+  background: #c89b3c;
+  content: "";
+}
+
+@media (max-width: 640px) {
+  .section-title::after {
+    left: 50%;
+    bottom: -0.55rem;
+    width: 30px;
+    transform: translateX(-50%);
+  }
+}
+
+.btn-gold,
+.btn-outline-light,
+.btn-navy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  border-radius: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  line-height: 1;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #c89b3c 0%, #d8b15a 100%);
+  color: #061b3a;
+  box-shadow: 0 12px 28px rgb(200 155 60 / 24%);
+}
+
+.btn-gold::before {
+  position: absolute;
+  inset: 0;
+  translate: -120% 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 35%), transparent);
+  content: "";
+  transition: translate 500ms ease;
+}
+
+.btn-gold:hover::before {
+  translate: 120% 0;
+}
+
+.btn-gold:hover,
+.btn-navy:hover,
+.btn-outline-light:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-light {
+  border: 1px solid rgb(255 255 255 / 32%);
+  background: rgb(255 255 255 / 8%);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+.btn-outline-light:hover {
+  border-color: rgb(216 177 90 / 70%);
+  background: rgb(255 255 255 / 14%);
+}
+
+.btn-navy {
+  background: #061b3a;
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgb(6 27 58 / 20%);
+}
+
+.btn-navy:hover {
+  background: #08254d;
+}
+
+.hero-image {
+  animation: heroScale 7s ease-out both;
+}
+
+@keyframes heroScale {
+  from {
+    transform: scale(1.055);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.select-navy {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+.select-light {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='rgba(16,35,63,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
