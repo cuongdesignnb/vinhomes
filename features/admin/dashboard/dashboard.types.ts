@@ -38,7 +38,7 @@ export interface RecentLead {
   phone: string;
   source: string;
   time: string;
-  status: "new" | "contacted" | "qualified";
+  status: "new" | "contacted" | "qualified" | "appointment_booked" | "negotiating" | "won" | "lost";
 }
 
 export interface ManagedProject {

@@ -20,6 +20,26 @@ const statusConfig: Record<
     bg: "bg-purple-50",
     text: "text-purple-600",
   },
+  appointment_booked: {
+    label: "Đã đặt lịch",
+    bg: "bg-amber-50",
+    text: "text-amber-600",
+  },
+  negotiating: {
+    label: "Thương lượng",
+    bg: "bg-indigo-50",
+    text: "text-indigo-600",
+  },
+  won: {
+    label: "Thành công",
+    bg: "bg-teal-50",
+    text: "text-teal-600",
+  },
+  lost: {
+    label: "Thất bại",
+    bg: "bg-rose-50",
+    text: "text-rose-600",
+  },
 };
 
 export default function RecentLeadsTable({ leads }: RecentLeadsTableProps) {
@@ -59,7 +79,11 @@ export default function RecentLeadsTable({ leads }: RecentLeadsTableProps) {
           </thead>
           <tbody>
             {leads.map((lead) => {
-              const status = statusConfig[lead.status];
+              const status = statusConfig[lead.status] || {
+                label: lead.status || "Chưa rõ",
+                bg: "bg-slate-50",
+                text: "text-slate-600",
+              };
               return (
                 <tr
                   key={lead.id}
