@@ -1,0 +1,80 @@
+name: vinhomes_lux_43873
+
+services:
+  web:
+    container_name: vinhomes_web_43873
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "43873:3000"
+    env_file:
+      - .env.docker.example
+    restart: unless-stopped
+    networks:
+      - vinhomes_lux_net_43873
+    depends_on:
+      - api
+
+  api:
+    container_name: vinhomes_api_43874
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "43874:8000"
+    env_file:
+      - ./backend/.env.docker.example
+    restart: unless-stopped
+    networks:
+      - vinhomes_lux_net_43873
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    container_name: vinhomes_mysql_43875
+    image: mysql:8.4
+    ports:
+      - "43875:3306"
+    environment:
+      MYSQL_DATABASE: vinhomes
+      MYSQL_USER: vinhomes_user
+      MYSQL_PASSWORD: vinhomes_pass_local
+      MYSQL_ROOT_PASSWORD: vinhomes_root_local
+    volumes:
+      - vinhomes_mysql_data_43875:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - vinhomes_lux_net_43873
+
+  redis:
+    container_name: vinhomes_redis_43876
+    image: redis:7-alpine
+    ports:
+      - "43876:6379"
+    volumes:
+      - vinhomes_redis_data_43876:/data
+    restart: unless-stopped
+    networks:
+      - vinhomes_lux_net_43873
+
+  mailpit:
+    container_name: vinhomes_mailpit_43877
+    image: axllent/mailpit:latest
+    ports:
+      - "43877:8025"
+    restart: unless-stopped
+    networks:
+      - vinhomes_lux_net_43873
+
+networks:
+  vinhomes_lux_net_43873:
+    name: vinhomes_lux_net_43873
+    driver: bridge
+
+volumes:
+  vinhomes_mysql_data_43875:
+    name: vinhomes_mysql_data_43875
+  vinhomes_redis_data_43876:
+    name: vinhomes_redis_data_43876

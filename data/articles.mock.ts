@@ -275,10 +275,12 @@ export function getMockArticleBySlug(slug: string): Article | null {
 }
 
 export function getMockRelatedArticles(_slug: string): RelatedArticle[] {
+  void _slug;
   return mockRelatedArticles;
 }
 
 export function getMockSidebarRelated(_slug: string): RelatedArticle[] {
+  void _slug;
   return mockSidebarRelated;
 }
 

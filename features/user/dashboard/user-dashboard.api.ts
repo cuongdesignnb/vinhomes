@@ -1,5 +1,6 @@
 import { userDashboardMockData } from "./user-dashboard.mock";
 import type { UserDashboardOverview } from "./user-dashboard.types";
+import { unwrapApiResponse } from "@/lib/api/http-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -21,5 +22,5 @@ export async function getUserDashboardOverview(): Promise<UserDashboardOverview>
     throw new Error("Không thể tải cổng thông tin khách hàng");
   }
 
-  return res.json();
+  return unwrapApiResponse(await res.json());
 }

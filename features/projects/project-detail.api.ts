@@ -3,6 +3,7 @@ import {
   getMockProjectDetailBySlug,
   getAllMockProjectSlugs,
 } from "@/data/projects-detail.mock";
+import { unwrapApiResponse } from "@/lib/api/http-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -13,14 +14,19 @@ export async function getProjectDetailBySlug(
     return getMockProjectDetailBySlug(slug);
   }
 
-  const res = await fetch(`${API_BASE_URL}/projects/${slug}`, {
-    next: { revalidate: 60 },
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/projects/${slug}`, {
+      next: { revalidate: 60 },
+    });
 
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Khong the tai thong tin du an");
+    if (res.status === 404) return null;
+    if (!res.ok) return getMockProjectDetailBySlug(slug);
 
-  return res.json();
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn(`API base URL configured but project detail for ${slug} not reachable. Falling back to mock data.`, error);
+    return getMockProjectDetailBySlug(slug);
+  }
 }
 
 export async function getAllProjectSlugs(): Promise<{ slug: string }[]> {
@@ -28,7 +34,12 @@ export async function getAllProjectSlugs(): Promise<{ slug: string }[]> {
     return getAllMockProjectSlugs();
   }
 
-  const res = await fetch(`${API_BASE_URL}/projects/slugs`);
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE_URL}/projects/slugs`);
+    if (!res.ok) return getAllMockProjectSlugs();
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn("API base URL configured but project slugs not reachable. Falling back to mock data.", error);
+    return getAllMockProjectSlugs();
+  }
 }

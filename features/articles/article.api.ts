@@ -4,6 +4,7 @@ import {
   getMockRelatedArticles,
   getAllMockArticleSlugs,
 } from "@/data/articles.mock";
+import { unwrapApiResponse } from "@/lib/api/http-client";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -14,17 +15,19 @@ export async function getArticleBySlug(
     return getMockArticleBySlug(slug);
   }
 
-  const res = await fetch(`${API_BASE_URL}/news/${slug}`, {
-    next: { revalidate: 60 },
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/news/${slug}`, {
+      next: { revalidate: 60 },
+    });
 
-  if (res.status === 404) return null;
+    if (res.status === 404) return null;
+    if (!res.ok) return getMockArticleBySlug(slug);
 
-  if (!res.ok) {
-    throw new Error("Không thể tải bài viết");
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn(`API base URL configured but news slug ${slug} not reachable. Falling back to mock data.`, error);
+    return getMockArticleBySlug(slug);
   }
-
-  return res.json();
 }
 
 export async function getRelatedArticles(
@@ -34,13 +37,18 @@ export async function getRelatedArticles(
     return getMockRelatedArticles(slug);
   }
 
-  const res = await fetch(`${API_BASE_URL}/news/${slug}/related`, {
-    next: { revalidate: 60 },
-  });
+  try {
+    const res = await fetch(`${API_BASE_URL}/news/${slug}/related`, {
+      next: { revalidate: 60 },
+    });
 
-  if (!res.ok) return [];
+    if (!res.ok) return getMockRelatedArticles(slug);
 
-  return res.json();
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn(`API base URL configured but news related for ${slug} not reachable. Falling back to mock data.`, error);
+    return getMockRelatedArticles(slug);
+  }
 }
 
 export async function getAllArticleSlugs(): Promise<{ slug: string }[]> {
@@ -48,7 +56,12 @@ export async function getAllArticleSlugs(): Promise<{ slug: string }[]> {
     return getAllMockArticleSlugs();
   }
 
-  const res = await fetch(`${API_BASE_URL}/news/slugs`);
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE_URL}/news/slugs`);
+    if (!res.ok) return getAllMockArticleSlugs();
+    return unwrapApiResponse(await res.json());
+  } catch (error) {
+    console.warn("API base URL configured but news slugs not reachable. Falling back to mock data.", error);
+    return getAllMockArticleSlugs();
+  }
 }
